@@ -1,0 +1,572 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #FF6B6B;
+  --primary-light: #FFE5E5;
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --text-primary: #191F28;
+  --text-secondary: #6B7684;
+  --text-tertiary: #ADB5BD;
+  --border: #E5E8EB;
+  --success: #00C471;
+  --warning: #FFB800;
+  --streak-gold: #FFD700;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: var(--safe-area-bottom);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.header-date {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Streak Badge */
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #FFFFFF;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.streak-badge i {
+  font-size: 16px;
+}
+
+/* Flashback Section */
+.flashback-section {
+  padding: 16px 20px;
+  background: var(--surface);
+  margin-bottom: 8px;
+}
+
+.flashback-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flashback-title i {
+  color: var(--primary-color);
+}
+
+.flashback-card {
+  background: var(--primary-light);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+}
+
+.flashback-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.flashback-content {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.flashback-mood {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 24px;
+}
+
+.flashback-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+/* Calendar Mini */
+.calendar-mini {
+  padding: 16px 20px;
+  background: var(--surface);
+  margin-bottom: 8px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendar-month {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar-nav button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 18px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.calendar-nav button:active {
+  background: var(--border);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.calendar-weekday {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.calendar-day.other-month {
+  color: var(--text-tertiary);
+}
+
+.calendar-day.today {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.calendar-day.selected {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.calendar-day.has-entry::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.calendar-day.selected.has-entry::after {
+  background: white;
+}
+
+/* Diary Content */
+.diary-content {
+  flex: 1;
+  padding: 20px;
+  background: var(--surface);
+}
+
+.diary-date-header {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.diary-entry-view {
+  min-height: 200px;
+}
+
+.diary-entry-display {
+  background: linear-gradient(135deg, var(--primary-light) 0%, #FFF5F5 100%);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.diary-mood-large {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.diary-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  word-break: keep-all;
+}
+
+.diary-time {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 16px;
+}
+
+.diary-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-tertiary);
+}
+
+.diary-empty i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.diary-empty-text {
+  font-size: 15px;
+}
+
+/* Mood Selector */
+.mood-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mood-option {
+  font-size: 32px;
+  padding: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.5;
+  transform: scale(0.9);
+  background: none;
+  border: none;
+}
+
+.mood-option.selected {
+  opacity: 1;
+  transform: scale(1.1);
+  background: var(--primary-light);
+}
+
+.mood-option:active {
+  transform: scale(0.95);
+}
+
+/* Bottom Input */
+.bottom-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 20px;
+  padding-bottom: calc(12px + var(--safe-area-bottom));
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.diary-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 12px 20px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: none;
+  min-height: 48px;
+  max-height: 120px;
+  font-family: inherit;
+}
+
+.diary-input:focus {
+  border-color: var(--primary-color);
+}
+
+.diary-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.submit-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.submit-btn:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+}
+
+.submit-btn:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+/* Statistics Section */
+.stats-section {
+  padding: 16px 20px;
+  background: var(--surface);
+  margin-top: 8px;
+}
+
+.stats-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: var(--background);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Mood Stats */
+.mood-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+}
+
+.mood-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mood-stat-emoji {
+  font-size: 24px;
+}
+
+.mood-stat-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Edit/Delete Actions */
+.entry-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn.edit {
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.action-btn.delete {
+  background: #FFF0F0;
+  border: 1px solid #FFCCCC;
+  color: #FF6B6B;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--primary-color);
+  border-radius: 1px;
+}
+
+/* Encouragement Message */
+.encouragement {
+  text-align: center;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, var(--primary-light) 0%, #FFF5F5 100%);
+  margin: 8px 0;
+}
+
+.encouragement-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.encouragement-text {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  color: var(--text-tertiary);
+}
+
+/* Spacer for bottom input */
+.bottom-spacer {
+  height: calc(80px + var(--safe-area-bottom));
+}
