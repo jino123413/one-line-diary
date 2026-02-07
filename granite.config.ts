@@ -3,10 +3,10 @@ import { defineConfig } from '@apps-in-toss/web-framework/config';
 export default defineConfig({
   appName: 'one-line-diary',
   web: {
-    host: 'localhost',
-    port: 3000,
+    host: '0.0.0.0',
+    port: 3002,
     commands: {
-      dev: 'rsbuild dev',
+      dev: 'rsbuild dev --host',
       build: 'rsbuild build',
     },
   },

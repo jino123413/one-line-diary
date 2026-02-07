@@ -6,7 +6,7 @@ export const StreakBadge = ({ streak }: StreakBadgeProps) => {
   return (
     <div className="streak-badge">
       <i className="ri-fire-fill"></i>
-      <span>{streak}\uC77C \uC5F0\uC18D</span>
+      <span>{streak}일 연속</span>
     </div>
   );
 };

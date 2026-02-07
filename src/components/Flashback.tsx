@@ -11,7 +11,7 @@ export const Flashback = ({ flashbacks }: FlashbackProps) => {
     <section className="flashback-section">
       <h3 className="flashback-title">
         <i className="ri-time-line"></i>
-        \uC9C0\uB09C \uAE30\uC5B5
+        지난 기억
       </h3>
       {flashbacks.map((fb, index) => (
         <div key={index} className="flashback-card" style={{ marginBottom: index < flashbacks.length - 1 ? 8 : 0 }}>

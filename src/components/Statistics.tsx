@@ -10,25 +10,25 @@ export const Statistics = ({ stats }: StatisticsProps) => {
   return (
     <div style={{ padding: '0 0 20px' }}>
       <div className="stats-section">
-        <h3 className="stats-title">\uB098\uC758 \uAE30\uB85D</h3>
+        <h3 className="stats-title">나의 기록</h3>
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-value">{stats.totalEntries}</div>
-            <div className="stat-label">\uCD1D \uAE30\uB85D</div>
+            <div className="stat-label">총 기록</div>
           </div>
           <div className="stat-card">
             <div className="stat-value">{stats.currentStreak}</div>
-            <div className="stat-label">\uD604\uC7AC \uC5F0\uC18D</div>
+            <div className="stat-label">현재 연속</div>
           </div>
           <div className="stat-card">
             <div className="stat-value">{stats.longestStreak}</div>
-            <div className="stat-label">\uCD5C\uC7A5 \uC5F0\uC18D</div>
+            <div className="stat-label">최장 연속</div>
           </div>
         </div>
       </div>
 
       <div className="stats-section">
-        <h3 className="stats-title">\uAC10\uC815 \uD1B5\uACC4</h3>
+        <h3 className="stats-title">감정 통계</h3>
         {totalMoodCount > 0 ? (
           <div className="mood-stats">
             {MOODS.map((mood) => {
@@ -43,7 +43,7 @@ export const Statistics = ({ stats }: StatisticsProps) => {
           </div>
         ) : (
           <div style={{ textAlign: 'center', padding: '20px', color: '#ADB5BD', fontSize: '14px' }}>
-            \uC544\uC9C1 \uAE30\uB85D\uC774 \uC5C6\uC5B4\uC694
+            아직 기록이 없어요
           </div>
         )}
       </div>
@@ -51,20 +51,21 @@ export const Statistics = ({ stats }: StatisticsProps) => {
       {stats.totalEntries > 0 && (
         <div className="encouragement" style={{ margin: '8px 0 0' }}>
           <div className="encouragement-icon">
-            {stats.currentStreak >= 7 ? '\uD83C\uDF1F' :
-             stats.currentStreak >= 3 ? '\uD83D\uDD25' : '\uD83D\uDCAA'}
+            {stats.currentStreak >= 7 ? '🌟' :
+             stats.currentStreak >= 3 ? '🔥' : '💪'}
           </div>
           <p className="encouragement-text">
             {stats.currentStreak >= 7
-              ? `\uB300\uB2E8\uD574\uC694! ${stats.currentStreak}\uC77C \uC5F0\uC18D \uAE30\uB85D \uC911!`
+              ? `대단해요! ${stats.currentStreak}일 연속 기록 중!`
               : stats.currentStreak >= 3
-              ? `\uC88B\uC544\uC694! ${stats.currentStreak}\uC77C\uC9F8 \uAE30\uB85D \uC911\uC774\uC5D0\uC694`
+              ? `좋아요! ${stats.currentStreak}일째 기록 중이에요`
               : stats.totalEntries === 1
-              ? '\uCCAB \uBC88\uC9F8 \uAE30\uB85D\uC744 \uB0A8\uACBC\uC5B4\uC694!'
-              : `\uCD1D ${stats.totalEntries}\uAC1C\uC758 \uC18C\uC911\uD55C \uAE30\uB85D\uC774 \uC788\uC5B4\uC694`}
+              ? '첫 번째 기록을 남겼어요!'
+              : `총 ${stats.totalEntries}개의 소중한 기록이 있어요`}
           </p>
         </div>
       )}
+
     </div>
   );
 };

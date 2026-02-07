@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { format, parseISO, isToday } from 'date-fns';
+import { format, parseISO, isToday, subDays } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useDiaryState, MOODS, DiaryEntry } from './hooks/useDiaryState';
+import { useDiaryState, MOODS } from './hooks/useDiaryState';
+import { useInterstitialAd } from './hooks/useInterstitialAd';
 import { Calendar } from './components/Calendar';
-import { Flashback } from './components/Flashback';
+import { FlashbackLocked } from './components/FlashbackLocked';
 import { MoodSelector } from './components/MoodSelector';
 import { StreakBadge } from './components/StreakBadge';
 import { Statistics } from './components/Statistics';
+import { StreakShield } from './components/StreakShield';
+
+const AD_GROUP_ID = 'ait.v2.live.52ded636ab0a44de';
 
 type Tab = 'write' | 'calendar' | 'stats';
 
@@ -16,6 +20,10 @@ function App() {
   const [inputText, setInputText] = useState('');
   const [selectedMood, setSelectedMood] = useState(MOODS[0].emoji);
   const [isEditing, setIsEditing] = useState(false);
+  const [flashbackUnlocked, setFlashbackUnlocked] = useState(false);
+  const [showStreakShield, setShowStreakShield] = useState(false);
+  const [streakShieldUsed, setStreakShieldUsed] = useState(false);
+  const [allowYesterdayWrite, setAllowYesterdayWrite] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
@@ -29,10 +37,29 @@ function App() {
     calculateStats,
   } = useDiaryState();
 
+  // 광고 훅
+  const { showInterstitialAd } = useInterstitialAd(AD_GROUP_ID);
+
   const currentEntry = getEntryByDate(selectedDate);
   const flashbacks = getFlashbacks(selectedDate);
   const stats = calculateStats();
   const isSelectedToday = isToday(parseISO(selectedDate));
+
+  // 연속 기록 위기 감지
+  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+  const hasYesterdayEntry = getEntryByDate(yesterday);
+  const isStreakInDanger = stats.currentStreak > 0 && !hasYesterdayEntry && !streakShieldUsed;
+
+  // 앱 시작 시 연속 기록 위기 확인
+  useEffect(() => {
+    if (isLoaded && isStreakInDanger && !streakShieldUsed) {
+      // 앱 로드 후 2초 뒤에 모달 표시
+      const timer = setTimeout(() => {
+        setShowStreakShield(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded, isStreakInDanger, streakShieldUsed]);
 
   // Reset input when date changes
   useEffect(() => {
@@ -84,6 +111,48 @@ function App() {
     setInputText('');
     setSelectedMood(MOODS[0].emoji);
   };
+
+  // 플래시백 잠금 해제 (광고 시청 후)
+  const handleUnlockFlashback = () => {
+    showInterstitialAd({
+      onDismiss: () => {
+        setFlashbackUnlocked(true);
+        // 오늘 하루 동안 잠금 해제 상태 유지
+        try {
+          localStorage.setItem('flashback_unlock_date', format(new Date(), 'yyyy-MM-dd'));
+        } catch (e) {
+          // ignore
+        }
+      },
+    });
+  };
+
+  // 플래시백 잠금 해제 상태 확인
+  useEffect(() => {
+    try {
+      const unlockDate = localStorage.getItem('flashback_unlock_date');
+      if (unlockDate === format(new Date(), 'yyyy-MM-dd')) {
+        setFlashbackUnlocked(true);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // 연속 기록 보호막 (광고 시청 후)
+  const handleStreakShield = () => {
+    showInterstitialAd({
+      onDismiss: () => {
+        setShowStreakShield(false);
+        setStreakShieldUsed(true);
+        setAllowYesterdayWrite(true);
+        // 어제 날짜로 이동
+        setSelectedDate(yesterday);
+        setActiveTab('write');
+      },
+    });
+  };
+
 
   const getEncouragementMessage = () => {
     const messages = [
@@ -148,9 +217,13 @@ function App() {
       {/* Content based on active tab */}
       {activeTab === 'write' && (
         <>
-          {/* Flashback Section */}
+          {/* Flashback Section (잠금 해제 가능) */}
           {flashbacks.length > 0 && (
-            <Flashback flashbacks={flashbacks} />
+            <FlashbackLocked
+              flashbacks={flashbacks}
+              isUnlocked={flashbackUnlocked}
+              onUnlock={handleUnlockFlashback}
+            />
           )}
 
           {/* Encouragement */}
@@ -187,6 +260,7 @@ function App() {
                     삭제
                   </button>
                 </div>
+
               </div>
             ) : (
               <div className="diary-empty">
@@ -216,6 +290,7 @@ function App() {
       {activeTab === 'stats' && (
         <Statistics stats={stats} />
       )}
+
 
       {/* Bottom Spacer */}
       <div className="bottom-spacer"></div>
@@ -270,6 +345,19 @@ function App() {
             )}
           </div>
         </div>
+      )}
+
+      {/* 연속 기록 보호막 모달 */}
+      {showStreakShield && (
+        <StreakShield
+          streak={stats.currentStreak}
+          targetDate={yesterday}
+          onWatch={handleStreakShield}
+          onDismiss={() => {
+            setShowStreakShield(false);
+            setStreakShieldUsed(true);
+          }}
+        />
       )}
     </div>
   );

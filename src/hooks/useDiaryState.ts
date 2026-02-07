@@ -212,14 +212,14 @@ export const useDiaryState = () => {
 };
 
 export const MOODS = [
-  { emoji: '\u{1F60A}', label: '\uAE30\uC058' },     // 기쁨
-  { emoji: '\u{1F60C}', label: '\uD3C9\uC628' },     // 평온
-  { emoji: '\u{1F914}', label: '\uC0DD\uAC01' },     // 생각
-  { emoji: '\u{1F622}', label: '\uC2AC\uD514' },     // 슬픔
-  { emoji: '\u{1F621}', label: '\uD654\uB0A8' },     // 화남
-  { emoji: '\u{1F634}', label: '\uD53C\uACE4' },     // 피곤
+  { emoji: '😊', label: '기쁨' },
+  { emoji: '😌', label: '평온' },
+  { emoji: '🤔', label: '생각' },
+  { emoji: '😢', label: '슬픔' },
+  { emoji: '😡', label: '화남' },
+  { emoji: '😴', label: '피곤' },
 ];
 
 export const getMoodEmoji = (mood: string): string => {
-  return MOODS.find(m => m.emoji === mood)?.emoji || '\u{1F60A}';
+  return MOODS.find(m => m.emoji === mood)?.emoji || '😊';
 };
