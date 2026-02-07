@@ -89,12 +89,17 @@ function App() {
     setSelectedMood(MOODS[0].emoji);
   };
 
+  // 수정 시 광고 시청 필요 (부가 기능)
   const handleEdit = () => {
     if (currentEntry) {
-      setInputText(currentEntry.text);
-      setSelectedMood(currentEntry.mood);
-      setIsEditing(true);
-      textareaRef.current?.focus();
+      showInterstitialAd({
+        onDismiss: () => {
+          setInputText(currentEntry.text);
+          setSelectedMood(currentEntry.mood);
+          setIsEditing(true);
+          textareaRef.current?.focus();
+        },
+      });
     }
   };
 
@@ -214,6 +219,7 @@ function App() {
                 </div>
                 <div className="entry-actions">
                   <button className="action-btn edit" onClick={handleEdit}>
+                    <span className="ad-badge ad-badge-outline">AD</span>
                     <i className="ri-edit-line"></i>
                     수정
                   </button>
@@ -222,6 +228,7 @@ function App() {
                     삭제
                   </button>
                 </div>
+                <p className="ad-notice">광고 시청 후 수정할 수 있어요</p>
 
               </div>
             ) : (

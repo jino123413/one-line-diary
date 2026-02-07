@@ -530,6 +530,12 @@ body {
   letter-spacing: 0.5px;
 }
 
+.ad-badge-outline {
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
 /* AD Notice */
 .ad-notice {
   text-align: center;

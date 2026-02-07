@@ -280,8 +280,8 @@ export const EmotionReport = ({
     };
   }, [entries, hasMonthlyData]);
 
-  // 최소 7개 기록 필요
-  if (entries.length < 7) return null;
+  // 최소 3개 기록 필요
+  if (entries.length < 3) return null;
 
   const handleUnlock = () => {
     showInterstitialAd({
