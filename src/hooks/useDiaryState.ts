@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { format, parseISO, subYears, subMonths, isValid } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { format, parseISO } from 'date-fns';
 
 export interface DiaryEntry {
   id: string;
@@ -80,39 +79,6 @@ export const useDiaryState = () => {
 
   const getEntryByDate = useCallback((date: string): DiaryEntry | undefined => {
     return entries.find(e => e.date === date);
-  }, [entries]);
-
-  const getFlashbacks = useCallback((currentDate: string) => {
-    const flashbacks: { label: string; entry: DiaryEntry }[] = [];
-
-    try {
-      const current = parseISO(currentDate);
-      if (!isValid(current)) return flashbacks;
-
-      const oneYearAgo = format(subYears(current, 1), 'yyyy-MM-dd');
-      const oneMonthAgo = format(subMonths(current, 1), 'yyyy-MM-dd');
-
-      const yearEntry = entries.find(e => e.date === oneYearAgo);
-      const monthEntry = entries.find(e => e.date === oneMonthAgo);
-
-      if (yearEntry) {
-        flashbacks.push({
-          label: format(parseISO(yearEntry.date), 'yyyy년 M월 d일', { locale: ko }),
-          entry: yearEntry
-        });
-      }
-
-      if (monthEntry) {
-        flashbacks.push({
-          label: format(parseISO(monthEntry.date), 'M월 d일', { locale: ko }),
-          entry: monthEntry
-        });
-      }
-    } catch {
-      // Invalid date
-    }
-
-    return flashbacks;
   }, [entries]);
 
   const getEntriesForMonth = useCallback((year: number, month: number): Set<number> => {
@@ -205,7 +171,6 @@ export const useDiaryState = () => {
     updateEntry,
     deleteEntry,
     getEntryByDate,
-    getFlashbacks,
     getEntriesForMonth,
     calculateStats,
   };

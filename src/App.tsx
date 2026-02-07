@@ -4,11 +4,11 @@ import { ko } from 'date-fns/locale';
 import { useDiaryState, MOODS } from './hooks/useDiaryState';
 import { useInterstitialAd } from './hooks/useInterstitialAd';
 import { Calendar } from './components/Calendar';
-import { FlashbackLocked } from './components/FlashbackLocked';
 import { MoodSelector } from './components/MoodSelector';
 import { StreakBadge } from './components/StreakBadge';
 import { Statistics } from './components/Statistics';
 import { StreakShield } from './components/StreakShield';
+import { EmotionReport } from './components/EmotionReport';
 
 const AD_GROUP_ID = 'ait.v2.live.52ded636ab0a44de';
 
@@ -20,19 +20,18 @@ function App() {
   const [inputText, setInputText] = useState('');
   const [selectedMood, setSelectedMood] = useState(MOODS[0].emoji);
   const [isEditing, setIsEditing] = useState(false);
-  const [flashbackUnlocked, setFlashbackUnlocked] = useState(false);
   const [showStreakShield, setShowStreakShield] = useState(false);
   const [streakShieldUsed, setStreakShieldUsed] = useState(false);
   const [allowYesterdayWrite, setAllowYesterdayWrite] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
+    entries,
     isLoaded,
     addEntry,
     updateEntry,
     deleteEntry,
     getEntryByDate,
-    getFlashbacks,
     getEntriesForMonth,
     calculateStats,
   } = useDiaryState();
@@ -41,7 +40,6 @@ function App() {
   const { showInterstitialAd } = useInterstitialAd(AD_GROUP_ID);
 
   const currentEntry = getEntryByDate(selectedDate);
-  const flashbacks = getFlashbacks(selectedDate);
   const stats = calculateStats();
   const isSelectedToday = isToday(parseISO(selectedDate));
 
@@ -111,33 +109,6 @@ function App() {
     setInputText('');
     setSelectedMood(MOODS[0].emoji);
   };
-
-  // 플래시백 잠금 해제 (광고 시청 후)
-  const handleUnlockFlashback = () => {
-    showInterstitialAd({
-      onDismiss: () => {
-        setFlashbackUnlocked(true);
-        // 오늘 하루 동안 잠금 해제 상태 유지
-        try {
-          localStorage.setItem('flashback_unlock_date', format(new Date(), 'yyyy-MM-dd'));
-        } catch (e) {
-          // ignore
-        }
-      },
-    });
-  };
-
-  // 플래시백 잠금 해제 상태 확인
-  useEffect(() => {
-    try {
-      const unlockDate = localStorage.getItem('flashback_unlock_date');
-      if (unlockDate === format(new Date(), 'yyyy-MM-dd')) {
-        setFlashbackUnlocked(true);
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
 
   // 연속 기록 보호막 (광고 시청 후)
   const handleStreakShield = () => {
@@ -217,15 +188,6 @@ function App() {
       {/* Content based on active tab */}
       {activeTab === 'write' && (
         <>
-          {/* Flashback Section (잠금 해제 가능) */}
-          {flashbacks.length > 0 && (
-            <FlashbackLocked
-              flashbacks={flashbacks}
-              isUnlocked={flashbackUnlocked}
-              onUnlock={handleUnlockFlashback}
-            />
-          )}
-
           {/* Encouragement */}
           {!currentEntry && isSelectedToday && (
             <div className="encouragement">
@@ -288,7 +250,10 @@ function App() {
       )}
 
       {activeTab === 'stats' && (
-        <Statistics stats={stats} />
+        <>
+          <EmotionReport entries={entries} showInterstitialAd={showInterstitialAd} />
+          <Statistics stats={stats} />
+        </>
       )}
 
 
