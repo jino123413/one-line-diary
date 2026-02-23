@@ -9,8 +9,10 @@ import { StreakBadge } from './components/StreakBadge';
 import { Statistics } from './components/Statistics';
 import { StreakShield } from './components/StreakShield';
 import { EmotionReport } from './components/EmotionReport';
+import BannerAd from './components/BannerAd';
 
 const AD_GROUP_ID = 'ait.v2.live.52ded636ab0a44de';
+const BANNER_AD_ID = 'ait.v2.live.9745e05bda9b4cf0';
 
 type Tab = 'write' | 'calendar' | 'stats';
 
@@ -263,6 +265,11 @@ function App() {
         </>
       )}
 
+
+      {/* Banner Ad */}
+      <div style={{ padding: '12px 16px 0' }}>
+        <BannerAd adGroupId={BANNER_AD_ID} />
+      </div>
 
       {/* Bottom Spacer */}
       <div className="bottom-spacer"></div>
